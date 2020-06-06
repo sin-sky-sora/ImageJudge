@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-LearnChoise = ((1,"VGG16"),(2,"VGG19"))
+LearnChoise = ((1,"VGG16"),(2,"VGG19"),(3,"ResNet50"))
 class ImageModel(models.Model):
     images = models.ImageField(upload_to='images',null=True, blank=True)
     ##画像のアップロード場所
