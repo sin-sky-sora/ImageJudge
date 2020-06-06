@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}
+<h1>画像診断アプリ</h1>
+{% endblock header %}
+
+{% block content %}
+    <a href={% url 'create' %}>診断する</a>
+{% endblock content %}
