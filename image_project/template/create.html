@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block customcss %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dropify.css' %}"></script>
+    <script src="{% static 'js/dropify.js' %}"></script>
+    <style type="text/css">
+      .hidden{
+        display: none;
+      }
+      .dropify-wrapper{
+        {% comment %} margin-left:50px; {% endcomment %}
+      }
+    </style>
+{% endblock customcss %}
+
+{% block header %}
+<h1>画像診断アプリ</h1>
+{% endblock header %}
+
+{% block content %}
+    <form class="former" action={% url 'judge' %} method="post" enctype="multipart/form-data">{% csrf_token %}
+        {% comment %} <input type="file" id="filer" name="image" accept="image/png, image/jpeg, image/jpg"> {% endcomment %}
+        <div class="container row">
+            <input type="file" name="images" accept="image/*" class="dropify col-12" required>
+            <input type="hidden" name="user" value="">
+            <div class="col-12">
+              <label class="col-3"><input type="checkbox" name="release" id="release">公開する</label>
+              <span class="col-3 text-right">タイトルを入力：</span><input type="text" name="title" id="title" placeholder="タイトル" class="col-4" required>
+            </div>
+            <div class="col-12">
+              <label class="col-3"><input type="checkbox" name="learning" id="learning">学習用に画像を提供する</label>
+              <span class="col-3 text-right">答えを入力：</span><input type="text" name="answer" id="answer" placeholder="答え" class="col-4">
+            </div>
+            <div class="col-3">
+              <select name="learn_model">
+                <option value=1>VGG16</option>
+                <option value=2>VGG19</option>
+              </select>
+            </div>
+            <span class="col-7"></span>
+            <div class="text-right col-2">
+                <input type="submit" value="送信する">
+            </div>
+        </div>
+    </form>
+    <img src="" alt="" class="" id="load">
+    <script type="text/javascript">
+      var random = ["https://mir-s3-cdn-cf.behance.net/project_modules/disp/93f32913765711.56277dab54b52.gif",
+                    "https://mir-s3-cdn-cf.behance.net/project_modules/disp/4df40113765711.56277e8775ac0.gif"]
+      $(function(){
+        $('#load').attr("src",random[Math.floor(Math.random()*random.length)])
+        $('#load').css({"position":"fixed","top":$('.dropify').position().top,"left":$(window).width()/5,"width":$(window).width()*3/5,"z-index":6});
+        $('#load').addClass("hidden");
+        /* formから送信するときに#loadを表示 */
+        $('form').submit(function(){
+          $('#load').removeClass("hidden");
+        });
+        /* dropifyの設定 */
+        $('.dropify').dropify({
+          messages:{
+            'default': '画像をドラッグアンドドロップするかクリックで選択できます',
+            'replace': 'ドラッグアンドドロップするかクリックで変更することができます',
+            'remove': '削除'
+          }
+        });
+        /* #learningの切り替わり時に文字色を変更 */
+        $('#learning').change(function(){
+          if($("#learning:checked").length){
+            $("#answer").attr('required',true);
+            if($("#answer").val() == "")
+              $('#answer').prev().css({"color":"red"});
+            else
+              $('#answer').prev().css({"color":"blue"});
+          }else{
+            $("#answer").attr('required',false);
+            $('#answer').prev().css({"color":"black"});
+            }
+        });
+        /* #titleを最初に色変更しておく */
+        $('#title').prev().css("color","red");
+        /* #answerに入力された時に色変更 */
+        $('#answer').on("input",function(){
+          if(!$("#learning:checked").length){
+            $(this).prev().css({"color":"black"});
+            $(this).attr('required',false);
+          }else if($(this).val() == ""){
+            $(this).prev().css({"color":"red"});
+            $(this).attr('required',true);
+          }else{
+            $(this).prev().css({"color":"blue"});
+            $(this).attr('required',true);
+          }
+        });
+        /* #titleが入力された時に色変更 */
+        $('#title').on("input",function(){
+          if($(this).val() == "")
+            $(this).prev().css({"color":"red"});
+          else
+            $(this).prev().css({"color":"blue"});
+        });
+
+      });
+      $(document).ready(function(){
+        /* dropifyの有効化 */
+        $('.dropify').dropify();
+      });
+    </script>
+{% endblock content %}
