@@ -44,11 +44,22 @@ model_vgg16 = VGG16(weights="imagenet",include_top=True)
 model_vgg19 = VGG19(weights="imagenet",include_top=True)
 model_resnet = ResNet50(weights="imagenet",include_top=True)
 # from keras.applications.xception import Xception
-# model_xception = Xception(weight="imagenet",include_top=True)
+# model_xception = Xception(weights="imagenet",include_top=True)
 # from keras.applications.inception_v3 import InceptionV3
 # model_inceptionv3 = InceptionV3(include_top=True, weights='imagenet')
 # from keras.applications.inception_resnet_v2 import InceptionResNetV2
 # model_inceptionresnet = InceptionResNetV2(include_top=True, weights='imagenet')
+# from keras.applications.mobilenet import MobileNet
+# model_mobilenet = MobileNet(include_top=True,weights='imagenet')
+# from keras.applications.densenet import DenseNet121,DenseNet169,DenseNet201
+# model_dense121 = DenseNet121(include_top=True,weights='imagenet')
+# model_dense169 = DenseNet169(include_top=True,weights='imagenet')
+# model_dense201 = DenseNet201(include_top=True,weights='imagenet')
+# from keras.applications.nasnet import NASNetLarge,NASNetMobile
+# model_naslarge = NASNetLarge(include_top=True,weights='imagenet')   #331*331
+# model_nasmobile = NASNetMobile(include_top=True,weights='imagenet') #224*224
+# from keras.applications.mobilenet_v2 import MobileNetV2
+# model_mobilenetv2 = MobileNetV2(include_top=True,weights='imagenet')
 
 #  caffe  : VGG16 VGG19 ResNet50
 # tf1 299 : Xception InceptionV3 InceptionResNetV2
@@ -57,15 +68,35 @@ model_resnet = ResNet50(weights="imagenet",include_top=True)
 ### NASNet --> 331*331 もあり
 # model_size = {"caffe":224,"tf1":299,"tf2":224,"torch":224}
 
-def get_model(num):
-    if(num == 1):
-        return model_vgg16,224
-    elif(num == 2):
-        return model_vgg19,224
-    elif(num == 3):
-        return model_resnet,224
-    else:
-        return None
+def getmodel(num):
+  if(num == 1):
+    return model_vgg16,224
+  elif(num == 2):
+    return model_vgg19,224
+  elif(num == 3):
+    return model_resnet,224
+  # elif(num == 4):
+  #   return model_xception,299
+  # elif(num == 5):
+  #   return model_inceptionv3,299
+  # elif(num == 6):
+  #   return model_inceptionresnet,299
+  # elif(num == 7):
+  #   return model_mobilenet,224
+  # elif(num == 8):
+  #   return model_dense121,224
+  # elif(num == 9):
+  #   return model_dense169,224
+  # elif(num == 10):
+  #   return model_dense201,224
+  # elif(num == 11):
+  #   return model_naslarge,331
+  # elif(num == 12):
+  #   return model_nasmobile,224
+  # elif(num == 13):
+  #   return model_mobilenetv2,224
+  else:
+    return None,0
 
 
 def judge(request,primary):
