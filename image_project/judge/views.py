@@ -43,14 +43,27 @@ def judgefunc(request):
 model_vgg16 = VGG16(weights="imagenet",include_top=True)
 model_vgg19 = VGG19(weights="imagenet",include_top=True)
 model_resnet = ResNet50(weights="imagenet",include_top=True)
+# from keras.applications.xception import Xception
+# model_xception = Xception(weight="imagenet",include_top=True)
+# from keras.applications.inception_v3 import InceptionV3
+# model_inceptionv3 = InceptionV3(include_top=True, weights='imagenet')
+# from keras.applications.inception_resnet_v2 import InceptionResNetV2
+# model_inceptionresnet = InceptionResNetV2(include_top=True, weights='imagenet')
+
+#  caffe  : VGG16 VGG19 ResNet50
+# tf1 299 : Xception InceptionV3 InceptionResNetV2
+# tf2 224 : MobileNet NASNet MobileNetV2
+#  torch  : DenseNet
+### NASNet --> 331*331 もあり
+# model_size = {"caffe":224,"tf1":299,"tf2":224,"torch":224}
 
 def get_model(num):
     if(num == 1):
-        return model_vgg16
+        return model_vgg16,224
     elif(num == 2):
-        return model_vgg19
+        return model_vgg19,224
     elif(num == 3):
-        return model_resnet
+        return model_resnet,224
     else:
         return None
 
@@ -59,7 +72,8 @@ def judge(request,primary):
     model = ImageModel.objects.get(pk=primary)
     request_model = model.learn_model##使用するモデルのpk
     # PILのimageで読み込み modelのデフォルト値が224*224のためリサイズして読み込む
-    img = image.load_img(model.images,target_size=(224,224))
+    model_name,size = get_model(request_model)
+    img = image.load_img(model.images,target_size=(size,size))
     # PILの場合 画像として読み込まれるため、配列に変換、画像としてはRGBで読み込まれる
     # CV2の場合 配列として読み込まれるがBGRで読み込まれる
     # PLTの場合 配列として読み込まれ、RGBで読み込まれる
@@ -68,7 +82,7 @@ def judge(request,primary):
     # 4次元（samples,rows,cols,channels）に変換
     # axisは追加位置
     x = np.expand_dims(x,axis=0)
-    model_name = get_model(request_model)
+
     if(model_name == None):
         print("error")
     # モデルの予測
