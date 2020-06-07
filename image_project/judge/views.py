@@ -7,33 +7,32 @@ from keras.applications.vgg19 import VGG19
 from keras.applications.resnet50 import ResNet50
 from googletrans import Translator
 from django.urls import reverse_lazy
-from fjango.views.generic import CreateView
 
 translator = Translator()
 
-class create(CreateView):
-    template_name = "create.html"
-    model = ImageModel
-    fields = '__all__'
-    success_url = reverse_lazy()##判定ページへ飛ばす
+def inputfunc(request):
+    return render(request,"create.html")
 
 def judgefunc(request):
-    # response = HttpResponse("judge")
-    # response.delete_cookie('user')
-    # try:
-    #     user = request.COOKIES.get('user')
-    # except:
-    #     set_uuid = uuid.uuid4()
-
-    #     response.set_cookie('user', set_uuid,60*60*24)
-    #     print(set_uuid)
-    #     print("UUIDを作ったよ")
-    # else:
-    #     print("COOKIEをゲット")
-    #     print(request.COOKIES.get('user'))
     if request.method == "POST":
         model = ImageModel()
         model.images = request.FILES['images']#htmlでの名前
+        try:
+            request.POST['learning']
+        except:
+            print("learning : False")
+        else:
+            model.learning = True
+            model.answer = request.POST['answer']
+        try:
+            request.POST['release']
+        except:
+            print("release : False")
+        else:
+            model.release = True
+        model.title = request.POST['title']
+        model.learn_model = request.POST['learn_model']
+        model.user = uuid.uuid4()   ##cookie取得、保存ができてないので適当に保存
         model.save()
         image,list_all = judge(request,model.pk)
         return render(request, "judge.html", {"img":image,"data":list_all})
@@ -45,7 +44,7 @@ model_vgg16 = VGG16(weights="imagenet",include_top=True)
 model_vgg19 = VGG19(weights="imagenet",include_top=True)
 model_resnet = ResNet50(weights="imagenet",include_top=True)
 
-def getmodel(num):
+def get_model(num):
     if(num == 1):
         return model_vgg16
     elif(num == 2):
@@ -57,10 +56,10 @@ def getmodel(num):
 
 
 def judge(request,primary):
-    getmodel = ImageModel.objects.get(pk=primary)
-    request_model = getmodel.learn_model##使用するモデルのpk
+    model = ImageModel.objects.get(pk=primary)
+    request_model = model.learn_model##使用するモデルのpk
     # PILのimageで読み込み modelのデフォルト値が224*224のためリサイズして読み込む
-    img = image.load_img(getmodel.images,target_size=(224,224))
+    img = image.load_img(model.images,target_size=(224,224))
     # PILの場合 画像として読み込まれるため、配列に変換、画像としてはRGBで読み込まれる
     # CV2の場合 配列として読み込まれるがBGRで読み込まれる
     # PLTの場合 配列として読み込まれ、RGBで読み込まれる
@@ -69,7 +68,7 @@ def judge(request,primary):
     # 4次元（samples,rows,cols,channels）に変換
     # axisは追加位置
     x = np.expand_dims(x,axis=0)
-    model_name = getmodel(request_model)
+    model_name = get_model(request_model)
     if(model_name == None):
         print("error")
     # モデルの予測
@@ -98,4 +97,4 @@ def judge(request,primary):
         if(rel > 95):
             break
     # print(list_all)
-    return getter.images , list_all
+    return model.images , list_all

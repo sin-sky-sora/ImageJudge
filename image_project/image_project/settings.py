@@ -119,7 +119,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-##プロジェクト外にstaticというファイルを作成し、cssやjsはその中に
+##プロジェクト内にstaticというファイルを作成し、cssやjsはその中に
 
 #imageフォルダの中に画像を入れていく
 MEDIA_ROOT = os.path.join(BASE_DIR,'image')
