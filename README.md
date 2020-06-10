@@ -22,7 +22,7 @@
 >
 
 ### runserverについて
->`python manage.py runserver --nothreading --neload`
+>`python manage.py runserver --nothreading --noreload`
 >で実行
 >
 >`python manage.py runserver`だと
