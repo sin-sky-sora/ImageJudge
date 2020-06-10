@@ -1,16 +1,18 @@
 # imageJudge
 
 ### 始める前に
->管理者アカウントの作成
->
->`python manage.py createsuperuser`
->
->
 >モデルの作成
 >
 >`python manage.py makemigrations`
 >
 >`python manage.py migrate`
+>
+>管理者アカウントの作成
+>
+>`python manage.py createsuperuser`
+>
+>
+
 ### 実行環境
 > keras == 2.3.1
 >
