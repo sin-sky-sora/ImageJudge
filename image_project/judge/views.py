@@ -1,14 +1,44 @@
 import numpy as np
+import uuid
 from django.shortcuts import render
 from .models import ImageModel
 from keras.preprocessing import image
-from keras.applications.vgg16 import VGG16, preprocess_input, decode_predictions
-from keras.applications.vgg19 import VGG19
-from keras.applications.resnet50 import ResNet50
+from keras.applications.vgg16 import preprocess_input, decode_predictions
 from googletrans import Translator
 from django.urls import reverse_lazy
 
+## 翻訳Class
 translator = Translator()
+## 各種モデル
+from keras.applications.vgg16 import VGG16
+model_vgg16 = VGG16(weights="imagenet",include_top=True)
+from keras.applications.vgg19 import VGG19
+model_vgg19 = VGG19(weights="imagenet",include_top=True)
+# from keras.applications.resnet50 import ResNet50
+# model_resnet = ResNet50(weights="imagenet",include_top=True)
+# from keras.applications.xception import Xception
+# model_xception = Xception(weight="imagenet",include_top=True)
+# from keras.applications.inception_v3 import InceptionV3
+# model_inceptionv3 = InceptionV3(include_top=True, weights='imagenet')
+# from keras.applications.inception_resnet_v2 import InceptionResNetV2
+# model_inceptionresnet = InceptionResNetV2(include_top=True, weights='imagenet')
+# from keras.applications.mobilenet import MobileNet
+# model_mobilenet = MobileNet(include_top=True,weights='imagenet')
+# from keras.applications.densenet import DenseNet121,DenseNet169,DenseNet201
+# model_dense121 = DenseNet121(include_top=True,weights='imagenet')
+# model_dense169 = DenseNet169(include_top=True,weights='imagenet')
+# model_dense201 = DenseNet201(include_top=True,weights='imagenet')
+# from keras.applications.nasnet import NASNetLarge,NASNetMobile
+# model_naslarge = NASNetLarge(include_top=True,weights='imagenet')
+# model_nasmobile = NASNetMobile(include_top=True,weights='imagenet')
+# from keras.applications.mobilenet_v2 import MobileNetV2
+# model_mobilenetv2 = MobileNetV2(include_top=True,weights='imagenet')
+
+#  caffe  : VGG16 VGG19 ResNet50
+#  tf 299 : Xception InceptionV3 InceptionResNetV2
+#  tf 224 : MobileNet NASNet MobileNetV2
+#  torch  : DenseNet
+
 
 def inputfunc(request):
     return render(request,"create.html")
@@ -38,41 +68,13 @@ def judgefunc(request):
         return render(request, "judge.html", {"img":image,"data":list_all})
     return render(request,"index.html")
 
-# MODE : caffe
-# INPUTSIZE : 224*224
-model_vgg16 = VGG16(weights="imagenet",include_top=True)
-model_vgg19 = VGG19(weights="imagenet",include_top=True)
-model_resnet = ResNet50(weights="imagenet",include_top=True)
-# from keras.applications.xception import Xception
-# model_xception = Xception(weight="imagenet",include_top=True)
-# from keras.applications.inception_v3 import InceptionV3
-# model_inceptionv3 = InceptionV3(include_top=True, weights='imagenet')
-# from keras.applications.inception_resnet_v2 import InceptionResNetV2
-# model_inceptionresnet = InceptionResNetV2(include_top=True, weights='imagenet')
-# from keras.applications.mobilenet import MobileNet
-# model_mobilenet = MobileNet(include_top=True,weights='imagenet')
-# from keras.applications.densenet import DenseNet121,DenseNet169,DenseNet201
-# model_dense121 = DenseNet121(include_top=True,weights='imagenet')
-# model_dense169 = DenseNet169(include_top=True,weights='imagenet')
-# model_dense201 = DenseNet201(include_top=True,weights='imagenet')
-# from keras.applications.nasnet import NASNetLarge,NASNetMobile
-# model_naslarge = NASNetLarge(include_top=True,weights='imagenet')
-# model_nasmobile = NASNetMobile(include_top=True,weights='imagenet')
-# from keras.applications.mobilenet_v2 import MobileNetV2
-# model_mobilenetv2 = MobileNetV2(include_top=True,weights='imagenet')
-
-#  caffe  : VGG16 VGG19 ResNet50
-#  tf 299 : Xception InceptionV3 InceptionResNetV2
-#  tf 224 : MobileNet NASNet MobileNetV2
-#  torch  : DenseNet
-
-def getmodel(num):
+def get_model(num):
   if(num == 1):
     return model_vgg16,224
   elif(num == 2):
     return model_vgg19,224
-  elif(num == 3):
-    return model_resnet,224
+  # elif(num == 3):
+  #   return model_resnet,224
   # elif(num == 4):
   #   return model_xception,299
   # elif(num == 5):

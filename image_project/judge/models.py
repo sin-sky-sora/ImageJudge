@@ -1,11 +1,11 @@
 from django.db import models
 
 # Create your models here.
-LearnChoise = ((1,"VGG16"),(2,"VGG19"),(3,"ResNet50"))
+LearnChoise = ((1,"VGG16"),(2,"VGG19"),(3,"ResNet50"),(4,"Xception"),(5,"InceptionV3"),(6,"InceptionResNetV2"),(7,"MobileNet"),(8,"DenseNet121"),(9,"DenseNet169"),(10,"DenseNet201"),(11,"NASNetLarge"),(12,"NASNetMobile"),(13,"MobileNetV2"))
 class ImageModel(models.Model):
     images = models.ImageField(upload_to='images',null=True, blank=True)
     ##画像のアップロード場所
-    user = models.UUIDField(editable=False)
+    user = models.UUIDField()
     ##ユーザー識別用のUUID      COOKIEに保存
     release = models.BooleanField(default=False)
     ##公開or非公開
