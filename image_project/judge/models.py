@@ -27,3 +27,5 @@ class LearningModel(models.Model):
     ##日本語訳
     tie = models.FloatField()
     ##確率
+    model = models.IntegerField()
+    ## モデル番号
