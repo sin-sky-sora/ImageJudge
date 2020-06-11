@@ -1,7 +1,7 @@
 import numpy as np
 import uuid
 from django.shortcuts import render
-from .models import ImageModel
+from .models import ImageModel, LearningModel
 from keras.preprocessing import image
 from keras.applications.imagenet_utils import decode_predictions
 from keras.applications.resnet50 import preprocess_input
@@ -40,6 +40,7 @@ model_mobilenetv2 = MobileNetV2(include_top=True,weights='imagenet')
 #  tf 224 : MobileNet NASNet MobileNetV2
 #  torch  : DenseNet
 
+models = {0:"ALL",1:"VGG16",2:"VGG19",3:"ResNet50",4:"Xception",5:"InceptionV3",6:"InceptionResNetV2",7:"MobileNet",8:"DenseNet121",9:"DenseNet169",10:"DenseNet201",11:"NASNetLarge",12:"NASNetMobile",13:"MobileNetV2"}
 
 def inputfunc(request):
     return render(request,"create.html")
@@ -65,8 +66,10 @@ def judgefunc(request):
         model.learn_model = request.POST['learn_model']
         model.user = uuid.uuid4()   ##cookie取得、保存ができてないので適当に保存
         model.save()
-        image,list_all = judge(model.pk)
-        return render(request, "judge.html", {"img":image,"data":list_all})
+        judge(model.pk)
+        GetAnswer = LearningModel.objects.filter(image_pk=model.pk)
+        image = ImageModel.objects.get(pk=model.pk)
+        return render(request, "judge.html", {"img":image,"data":GetAnswer,"models":models})
     return render(request,"index.html")
 
 def get_model(num):
@@ -131,16 +134,12 @@ def judge(primary):
         for st in text:
             tr += str(st)+" "
         trans = translator.translate(tr,dest="ja")
-        # print("翻訳前："+tr)
-        # print("翻訳後："+trans.text)
-        # print("{:.01f}%".format(result[2]*100))
-        temp.append(tr)             #en
-        temp.append(trans.text)     #ja
-        temp.append("{:.01f}%".format(result[2]*100))
-        list_all.insert(count,temp)
-        count+=1
+        maker.image_pk = primary
+        maker.en = tr
+        maker.jp = trans.text
+        maker.tie = round(result[2]*100,2)
+        maker.model = request_model
+        maker.save()
         rel += result[2]*100
-        if(rel > 95):
+        if(rel > 99):
             break
-    # print(list_all)
-    return model.images , list_all
