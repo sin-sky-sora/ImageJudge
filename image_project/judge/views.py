@@ -43,7 +43,14 @@ model_mobilenetv2 = MobileNetV2(include_top=True,weights='imagenet')
 models = {0:"ALL",1:"VGG16",2:"VGG19",3:"ResNet50",4:"Xception",5:"InceptionV3",6:"InceptionResNetV2",7:"MobileNet",8:"DenseNet121",9:"DenseNet169",10:"DenseNet201",11:"NASNetLarge",12:"NASNetMobile",13:"MobileNetV2"}
 
 def inputfunc(request):
-    return render(request,"create.html",,{"models":models})
+    return render(request,"create.html",{"models":models})
+
+def judgerfunc(request,pk):
+    image = ImageModel.objects.get(pk=pk)
+    result = LearningModel.objects.filter(image_pk=pk)
+    if int(image.learn_model) == 0:
+      return render(request,"judge_all.html",{"img":image,"data":result,"models":models})
+    return render(request,"judge.html",{"img":image,"data":result,"models":models})
 
 def judgefunc(request):
     if request.method == "POST":
@@ -114,6 +121,8 @@ def judge(primary):
     request_model = model.learn_model##使用するモデルのpk
     # PILのimageで読み込み modelのデフォルト値が224*224のためリサイズして読み込む
     model_name,size = get_model(request_model)
+    if(model_name == None):
+        print("error")
     img = image.load_img(model.images,target_size=(size,size))
     # PILの場合 画像として読み込まれるため、配列に変換、画像としてはRGBで読み込まれる
     # CV2の場合 配列として読み込まれるがBGRで読み込まれる
@@ -123,18 +132,13 @@ def judge(primary):
     # 4次元（samples,rows,cols,channels）に変換
     # axisは追加位置
     x = np.expand_dims(x,axis=0)
-
-    if(model_name == None):
-        print("error")
     # モデルの予測
     preds = model_name.predict(preprocess_input(x))
     results = decode_predictions(preds, top=5)[0]# 上位5個を取得
-    list_all = []
-    count = 0
     rel = 0
     ## 結果の表示
     for result in results:
-        temp = []
+        maker = LearningModel()
         text = str(result[1]).split("_")
         tr = ""
         for st in text:
