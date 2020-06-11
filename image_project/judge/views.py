@@ -43,7 +43,7 @@ model_mobilenetv2 = MobileNetV2(include_top=True,weights='imagenet')
 models = {0:"ALL",1:"VGG16",2:"VGG19",3:"ResNet50",4:"Xception",5:"InceptionV3",6:"InceptionResNetV2",7:"MobileNet",8:"DenseNet121",9:"DenseNet169",10:"DenseNet201",11:"NASNetLarge",12:"NASNetMobile",13:"MobileNetV2"}
 
 def inputfunc(request):
-    return render(request,"create.html")
+    return render(request,"create.html",,{"models":models})
 
 def judgefunc(request):
     if request.method == "POST":
@@ -66,10 +66,16 @@ def judgefunc(request):
         model.learn_model = request.POST['learn_model']
         model.user = uuid.uuid4()   ##cookie取得、保存ができてないので適当に保存
         model.save()
-        judge(model.pk)
+        if int(request.POST['learn_model']) == 0:
+          judge_all(model.pk)
+        else:
+          judge(model.pk)
         GetAnswer = LearningModel.objects.filter(image_pk=model.pk)
         image = ImageModel.objects.get(pk=model.pk)
-        return render(request, "judge.html", {"img":image,"data":GetAnswer,"models":models})
+        if int(request.POST['learn_model']) == 0:
+          return render(request,"judge_all.html",{"img":image,"data":GetAnswer,"models":models})
+        else:
+          return render(request, "judge.html", {"img":image,"data":GetAnswer,"models":models})
     return render(request,"index.html")
 
 def get_model(num):
@@ -143,3 +149,45 @@ def judge(primary):
         rel += result[2]*100
         if(rel > 99):
             break
+
+def judge_all(primary):
+  model = ImageModel.objects.get(pk=primary)
+  request_model = model.learn_model##使用するモデルのpk
+  for request_model in range(1,len(models)):
+      # PILのimageで読み込み modelのデフォルト値が224*224のためリサイズして読み込む
+      model_name,size = get_model(request_model)
+      print("NOW MODEL : "+str(models[request_model]))
+      if(model_name == None):
+          print("error")
+      img = image.load_img(model.images,target_size=(size,size))
+      # PILの場合 画像として読み込まれるため、配列に変換、画像としてはRGBで読み込まれる
+      # CV2の場合 配列として読み込まれるがBGRで読み込まれる
+      # PLTの場合 配列として読み込まれ、RGBで読み込まれる
+      x = image.img_to_array(img)
+      # 3次元（rows,cols,channels）から
+      # 4次元（samples,rows,cols,channels）に変換
+      # axisは追加位置
+      x = np.expand_dims(x,axis=0)
+      # モデルの予測
+      preds = model_name.predict(preprocess_input(x))
+      results = decode_predictions(preds, top=5)[0]# 上位5個を取得
+      rel = 0
+      ## 結果の表示
+      for result in results:
+          maker = LearningModel()
+          # temp = []
+          text = str(result[1]).split("_")
+          tr = ""
+          for st in text:
+              tr += str(st)+" "
+          trans = translator.translate(tr,dest="ja")
+          maker.image_pk = primary
+          maker.en = tr
+          maker.jp = trans.text
+          maker.tie = round(result[2]*100,2)
+          maker.model = request_model
+          maker.save()
+          rel += result[2]*100
+          if(rel > 99):
+              break
+      print("End Model")

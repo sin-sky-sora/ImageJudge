@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block customcss %}
+    <script src="{% static 'js/display.js' %}"></script>
+    <style type="text/css">
+        .model_name{
+          text-align: center;
+        }
+        .context{
+          position: absolute;
+        }
+    </style>
+{% endblock customcss %}
+
+{% block header %}
+<h1>画像診断アプリ</h1>
+{% endblock header %}
+
+{% block content %}
+    <div class="content">
+      <img class="imager" src="{{ img.images.url }}" alt="">
+      {% if data %}
+        <div class="context">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr><th colspan=4>診断結果</th></tr>
+              <tr>
+                <th>使用モデル</th>
+                <th>英語</th>
+                <th>日本語訳</th>
+                <th>確率</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for da in data %}
+                <tr>
+                    {% for key,name in models.items %}
+                        {% if key == da.model %}
+                            <td>{{ name }}</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td>{{ da.en }}</td>
+                    <td>{{ da.jp }}</td>
+                    <td>{{ da.tie }}%</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+      <a href="{% url 'create' %}" class="btn btn-dark prev-btn"><戻る</a>
+      <script type="text/javascript">
+
+      </script>
+    </div>
+{% endblock content %}
