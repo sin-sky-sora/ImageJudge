@@ -2,18 +2,14 @@
 {% load static %}
 
 {% block customcss %}
+    <link rel="stylesheet" href="{% static 'css/sort.css' %}"></link>
+    <link rel="stylesheet" href="{% static 'css/judge.css' %}"></link>
+    <link rel="stylesheet" href="{% static 'css/search.css' %}"></link>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/js/jquery.tablesorter.min.js"></script>
     <script src="{% static 'js/display.js' %}"></script>
-    <style type="text/css">
-        .imager{
-          max-width: 500px;
-        }
-        .model_name{
-          text-align: center;
-        }
-        .context{
-          position: absolute;
-        }
-    </style>
+    <script src="{% static 'js/sort.js' %}"></script>
+    <script src="{% static 'js/search.js' %}"></script>
 {% endblock customcss %}
 
 {% block header %}
@@ -25,6 +21,17 @@
       <img class="imager" src="{{ img.images.url }}" alt="">
       {% if data %}
         <div class="context">
+          <div class="menu">
+            <h4 class="menu-bar"><span class="toggle">☆</span>モデルの絞り込み</h4>
+            <ul class="menu-custom">
+              {% for key,name in models.items%}
+                {% if forloop.first %}
+                {% else %}
+                  <li><label><input type="checkbox" class="search-item" name="search" value="{{ key }}">{{ name }}</label></li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
           <table class="table table-bordered table-striped">
             <thead>
               <tr><th colspan=4>診断結果</th></tr>
@@ -40,7 +47,7 @@
                 <tr>
                     {% for key,name in models.items %}
                         {% if key == da.model %}
-                            <td>{{ name }}</td>
+                            <td class="model-name" data-value="{{ key }}">{{ name }}</td>
                         {% endif %}
                     {% endfor %}
                     <td>{{ da.en }}</td>
@@ -53,8 +60,5 @@
         </div>
       {% endif %}
       <a href="{% url 'create' %}" class="btn btn-dark prev-btn"><戻る</a>
-      <script type="text/javascript">
-
-      </script>
     </div>
 {% endblock content %}

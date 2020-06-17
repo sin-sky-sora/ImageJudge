@@ -1,0 +1,17 @@
+@charset "UTF-8";
+.tablesorter-headerAsc {
+    /* background-image: url({% static 'icon/up.png' %}); */
+    background-image: url("../icon/up.png");
+    background-repeat: no-repeat;
+    background-position: center right;
+    border-bottom: #000 2px solid;
+    background-size: 1.5rem;
+}
+.tablesorter-headerDesc {
+    /* background-image: url({% static 'icon/down.png' %}); */
+    background-image: url("../icon/down.png");
+    background-repeat: no-repeat;
+    background-position: center right;
+    border-bottom: #000 2px solid;
+    background-size: 1.5rem;
+}

@@ -1,0 +1,11 @@
+.menu{
+    position: fixed;
+    right: 0px;
+    background-color: #f0ffee;
+}
+.menu ul{
+    list-style: none;
+}
+.hide{
+    display: none;
+}

@@ -2,18 +2,11 @@
 {% load static %}
 
 {% block customcss %}
+    <link rel="stylesheet" href="{% static 'css/sort.css' %}"></link>
+    <link rel="stylesheet" href="{% static 'css/judge.css' %}"></link>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/js/jquery.tablesorter.min.js"></script>
     <script src="{% static 'js/display.js' %}"></script>
-    <style type="text/css">
-        .imager{
-          max-width: 500px;
-        }
-        .model_name{
-          text-align: center;
-        }
-        .context{
-          position: absolute;
-        }
-    </style>
+    <script src="{% static 'js/sort.js' %}"></script>
 {% endblock customcss %}
 
 {% block header %}
@@ -52,8 +45,5 @@
         </div>
       {% endif %}
       <a href="{% url 'create' %}" class="btn btn-dark prev-btn"><戻る</a>
-      <script type="text/javascript">
-
-      </script>
     </div>
 {% endblock content %}
