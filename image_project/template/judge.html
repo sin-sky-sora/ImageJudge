@@ -4,9 +4,15 @@
 {% block customcss %}
     <link rel="stylesheet" href="{% static 'css/sort.css' %}"></link>
     <link rel="stylesheet" href="{% static 'css/judge.css' %}"></link>
+    <link rel="stylesheet" href="{% static 'css/chart.css' %}"></link>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/js/jquery.tablesorter.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script type="text/javascript" src="https://github.com/nagix/chartjs-plugin-colorschemes/releases/download/v0.2.0/chartjs-plugin-colorschemes.min.js"></script>
     <script src="{% static 'js/display.js' %}"></script>
     <script src="{% static 'js/sort.js' %}"></script>
+    <script src="{% static 'js/chart.js' %}"></script>
+
 {% endblock customcss %}
 
 {% block header %}
@@ -17,6 +23,20 @@
     <div class="content">
       <img class="imager" src="{{ img.images.url }}" alt="">
       {% if data %}
+        <div class="window" style="width:300px;height:300px;display:none;">
+          <p class="window-title" style="background-color:skyblue;margin:0;border:1px gray solid;">
+            結果
+            <span class="window-item mini" style="right:24px;">
+              -
+            </span>
+            <span class="window-item del" style="right:0px;">
+              ×
+            </span>
+          </p>
+          <div class="canvas-group" style="background-color:skyblue;border:1px gray solid;">
+            <canvas id="chart" height="400"width="400"></canvas>
+          </div>
+        </div>
         <div class="context">
           <table class="table table-bordered table-striped">
             <thead>
@@ -44,6 +64,34 @@
           </table>
         </div>
       {% endif %}
+      <input type="button" class="btn btn-dark show-btn" value="グラフを表示" onclick="view();">
       <a href="{% url 'create' %}" class="btn btn-dark prev-btn"><戻る</a>
     </div>
+    <script type="text/javascript">
+      const ctx = document.getElementById('chart');
+      var data = {
+        datasets:[{
+          data: [{% for da in data %}{{ da.tie }}{% if forloop.last %}{% else %},{% endif %}{% endfor %}],
+        }],
+        labels:[
+        {% for da in data %}'{{ da.jp }}'{% if forloop.last %}{% else %},{% endif %}{% endfor %}
+        ]
+      };
+      var option = {
+        cutoutPercentage: 50,
+        plugins:{
+          colorschemes:{
+            scheme: 'tableau.Classic20'
+          }
+        }
+      }
+      function view(){
+        var myPie = new Chart(ctx,{
+          type: 'doughnut',
+          data: data,
+          options: option
+        });
+        $('.window').css({"display":"block"});
+      }
+    </script>
 {% endblock content %}

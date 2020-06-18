@@ -1,0 +1,16 @@
+.window{
+    position: fixed;
+    z-index:10;
+}
+.window-item{
+    display: inline-block;
+    position: absolute;
+    border: 1px gray solid;
+    height: 22px;
+    width: 22px;
+    background: rgba(255,255,255,0.6);
+}
+.show-btn{
+    position: fixed;
+    left:5px;
+}
