@@ -41,8 +41,15 @@ model_mobilenetv2 = MobileNetV2(include_top=True,weights='imagenet')
 #  torch  : DenseNet
 
 models = {0:"ALL",1:"VGG16",2:"VGG19",3:"ResNet50",4:"Xception",5:"InceptionV3",6:"InceptionResNetV2",7:"MobileNet",8:"DenseNet121",9:"DenseNet169",10:"DenseNet201",11:"NASNetLarge",12:"NASNetMobile",13:"MobileNetV2"}
+cookie_name = "user.id.uuid"
 
 def inputfunc(request):
+    try:
+      get_id = request.COOKIES[cookie_name]
+    except:
+      response = render(request,"render.html")
+      response.set_cookie(key=cookie_name,value=uuid.uuid4())
+      return response
     return render(request,"create.html",{"models":models})
 
 def judgerfunc(request,pk):
@@ -71,7 +78,7 @@ def judgefunc(request):
             model.release = True
         model.title = request.POST['title']
         model.learn_model = request.POST['learn_model']
-        model.user = uuid.uuid4()   ##cookie取得、保存ができてないので適当に保存
+        model.user = request.POST['name_id']
         model.save()
         if int(request.POST['learn_model']) == 0:
           judge_all(model.pk)
