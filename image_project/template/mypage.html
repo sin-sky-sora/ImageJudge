@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block customcss %}
+{% endblock customcss %}
+
+{% block content %}
+    {% for post in message %}
+        <div class="media">
+            <img src="{{ post.images.url }}" class="mr-3" alt="">
+            <div class="media-body">
+                <h5 class="mt-0 btn-h5">{{ post.title }}</h5>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>モデル名</th>
+                            <th>英語</th>
+                            <th>日本語</th>
+                            <th>確率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                            <tr>
+                                <td>{{ resilt.model }}</td>
+                                <td>{{ result.en }}</td>
+                                <td>{{ result.ja }}</td>
+                                <td>{{ result.tie }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endfor %}
+    <script type="text/javascript">
+        $(function(){
+            $('.btn-h5').on('click',function(){
+                $(this).next("table").animate({"height":"toggle"});
+            });
+            $('table').animate({"height":"toggle"});
+        });
+    </script>
+{% endblock content %}

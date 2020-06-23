@@ -202,3 +202,14 @@ def judge_all(primary):
           if(rel > 99):
               break
       print("End Model")
+
+def mypagefunc(request):
+  try:
+    get_id = request.COOKIES[cookie_name]
+  except:
+    response = render(request,"render.html")
+    response.set_cookie(key=cookie_name,value=uuid.uuid4())
+    return response
+  req = ImageModel.objects.filter(user=get_id)
+  result = LearningModel.objects.filter(image_pk=req.pk)
+  return render(request,"mypage.html",{"message":req,"results":result,"models":models})
