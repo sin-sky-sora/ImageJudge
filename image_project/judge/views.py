@@ -206,6 +206,7 @@ def judge_all(primary):
 def mypagefunc(request):
   try:
     get_id = request.COOKIES[cookie_name]
+    get_id = uuid.UUID(get_id)
   except:
     response = render(request,"render.html")
     response.set_cookie(key=cookie_name,value=uuid.uuid4())
