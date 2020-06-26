@@ -50,7 +50,7 @@ def inputfunc(request):
       response = render(request,"render.html")
       response.set_cookie(key=cookie_name,value=uuid.uuid4())
       return response
-    return render(request,"create.html",{"models":models})
+    return render(request,"create.html",{"models":models,"id":get_id})
 
 def judgerfunc(request,pk):
     image = ImageModel.objects.get(pk=pk)
@@ -211,6 +211,6 @@ def mypagefunc(request):
     response = render(request,"render.html")
     response.set_cookie(key=cookie_name,value=uuid.uuid4())
     return response
-  req = ImageModel.objects.filter(user=get_id)
-  result = LearningModel.objects.filter(image_pk=req.pk)
+  req = ImageModel.objects.filter(user=str(get_id))
+  result = LearningModel.objects.all()
   return render(request,"mypage.html",{"message":req,"results":result,"models":models})

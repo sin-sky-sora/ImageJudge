@@ -7,9 +7,7 @@
 {% block content %}
     {% if message %}
         {% for post in message %}
-            <p>{{ id }}</p>
-            <p>{{ post.user }}</p>
-            {% if id == "ec598b49-d23e-4383-b100-94662f0bf18d" %}
+            {% if id == post.user %}
                 <div class="media">
                     <img src="{{ post.images.url }}" class="mr-3" alt="" width="300">
                     <div class="media-body">
@@ -17,7 +15,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>モデル名</th>
+                                    {% comment %} <th>モデル名</th> {% endcomment %}
                                     <th>英語</th>
                                     <th>日本語</th>
                                     <th>確率</th>
@@ -27,9 +25,9 @@
                                 {% for result in results %}
                                     {% if result.image_pk == post.pk %}
                                         <tr>
-                                            <td>{{ resilt.model }}</td>
+                                            {% comment %} <td>{{ resilt.model }}</td> {% endcomment %}
                                             <td>{{ result.en }}</td>
-                                            <td>{{ result.ja }}</td>
+                                            <td>{{ result.jp }}</td>
                                             <td>{{ result.tie }}</td>
                                         </tr>
                                     {% endif %}
