@@ -121,3 +121,4 @@ wcwidth==0.1.7
 webencodings==0.5.1
 websocket-client==0.44.0
 websockets==8.1
+whitenoise==5.1.0
