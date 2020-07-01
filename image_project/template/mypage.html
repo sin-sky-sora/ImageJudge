@@ -6,13 +6,14 @@
 
 {% block content %}
     {% if message %}
+        <h3>今まであなたが診断してきた画像</h3>
         {% for post in message %}
             {% if id == post.user %}
                 <div class="media">
                     <img src="{{ post.images.url }}" class="mr-3" alt="" width="300">
                     <div class="media-body">
                         <h5 class="mt-0 btn-h5">{{ post.title }}</h5>
-                        <table>
+                        <table class="table">
                             <thead>
                                 <tr>
                                     {% comment %} <th>モデル名</th> {% endcomment %}
@@ -47,6 +48,9 @@
                 $(this).next("table").animate({"height":"toggle"});
             });
             $('table').animate({"height":"toggle"});
+            $('img').on('click',function(){
+                $(this).next("div.media-body").animate({"height":"toggle"});
+            });
         });
     </script>
 {% endblock content %}

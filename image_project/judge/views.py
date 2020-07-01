@@ -213,4 +213,4 @@ def mypagefunc(request):
     return response
   req = ImageModel.objects.filter(user=str(get_id))
   result = LearningModel.objects.all()
-  return render(request,"mypage.html",{"message":req,"results":result,"models":models})
+  return render(request,"mypage.html",{"message":req,"results":result,"models":models,"id":get_id})
