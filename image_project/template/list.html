@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'css/sort.css' %}"></link>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/js/jquery.tablesorter.min.js"></script>
+<script src="{% static 'js/sort.js' %}"></script>
+<style type="text/css">
+    .one{
+        display: inline-block;
+    }
+    .hide{
+        display: none;
+    }
+    img{
+        max-width: 300px;
+        max-height: 300px;
+    }
+    .main-img{
+
+    }
+    img#modal-img{
+        vertical-align:top;
+        margin:10px;
+    }
+    #copy-link{
+        padding: 6px 12px;
+    }
+</style>
+{% endblock customcss %}
+
+{% block content %}
+    {% for res in respons %}
+        <div class="one">
+            <img src="{{ res.images.url }}" class="trig" class="main-img" data-id="{{ forloop.counter }}">
+            <div class="hide" id="table-{{ forloop.counter }}">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr><th colspan=4>診断結果</th></tr>
+                        <tr>
+                            <th>使用モデル</th>
+                            <th>英語</th>
+                            <th>日本語訳</th>
+                            <th>確率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for da in ans %}
+                            {% if da.image_pk == res.pk %}
+                            <tr>
+                                {% for key,name in models.items %}
+                                    {% if key == da.model %}
+                                        <td class="model-name" data-value="{{ key }}">{{ name }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                                <td>{{ da.en }}</td>
+                                <td>{{ da.jp }}</td>
+                                <td>{{ da.tie }}%</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <span class="hide" id="title-{{ forloop.counter }}">
+                <h3>{{ res.title }}</h3>
+            </span>
+            <div class="hide" id="link-{{ forloop.counter }}">
+                <a href="{% url 'judger' res.pk %}" class="btn-success">開く</a>
+            </div>
+        </div>
+    {% endfor %}
+    {% include "modal-maker.html" %}
+    <script type="text/javascript">
+        $(function(){
+            $("div.modal-body").scroll(function(){
+                $('#modal-img').css({"position":"relative","top":$(this).scrollTop()});
+            });
+            $('.trig').on('click',function(){
+                var ff = $(this).data("id");
+                console.log(ff);
+                var src = $(this).attr("src");
+                $("#modal-op").modal();
+                $('#modal-img').attr("src",src);
+                $('#modal-table').html($("#table-"+ff).html());
+                $('#copy-link').html($("#link-"+ff).html());
+                $('table.table').tablesorter({});
+                $('span.modal-title').html($("#title-"+ff).html());
+            });
+        });
+    </script>
+{% endblock content %}

@@ -1,0 +1,20 @@
+<header>
+    <ul style="list-style:none;" class="header">
+        <li><h4><a href={% url 'create' %} class="title">画像診断アプリ</a></h4></li>
+        <li><a href={% url 'create' %}>画像診断</a></li>
+        <li><a href={% url 'mypage' %}>自分の投稿</a></li>
+        <li><a href={% url 'list' %}>みんなの投稿</a></li>
+    </ul>
+</header>
+<style>
+    header ul.header li{
+        display: inline-block;
+        margin: 0px 20px;
+    }
+    header ul.header li h4 a.title{
+        color: black;
+    }
+    header ul.header li h4 a.title:hover{
+        text-decoration:none;
+    }
+</style>

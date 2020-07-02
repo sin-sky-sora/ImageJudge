@@ -16,10 +16,6 @@
     </style>
 {% endblock customcss %}
 
-{% block header %}
-<h1>画像診断アプリ</h1>
-{% endblock header %}
-
 {% block content %}
     <form class="former" action={% url 'judge' %} method="post" enctype="multipart/form-data">{% csrf_token %}
         {% comment %} <input type="file" id="filer" name="image" accept="image/png, image/jpeg, image/jpg"> {% endcomment %}

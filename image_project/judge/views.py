@@ -214,3 +214,8 @@ def mypagefunc(request):
   req = ImageModel.objects.filter(user=str(get_id))
   result = LearningModel.objects.all()
   return render(request,"mypage.html",{"message":req,"results":result,"models":models,"id":get_id})
+
+def released(request):
+  res = ImageModel.objects.filter(release__exact=True)
+  ans = LearningModel.objects.all()
+  return render(request,"list.html",{"respons":res,"ans":ans,"models":models})

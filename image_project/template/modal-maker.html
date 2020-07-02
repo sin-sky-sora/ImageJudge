@@ -1,0 +1,19 @@
+{% comment %} モーダル {% endcomment %}
+    <div class="modal fade" id="modal-op" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="exampleModalLabel"></span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modal-img" class="float-left rounded" src="" alt="">
+                    <div id="modal-table" class="float-right" style="display:inline-block;/*left:300px;position:relative*/"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                    <span id="copy-link" class="btn-success"></span>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -23,12 +23,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'ux!=e62=p)w407v-_t5%&&@$s=tv#b$af#yd6$!mx122orfzs5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-try:
-    from .local_settings import *
-except ImportError:
-    pass
+## heroku専用 
+# try:
+#     from .local_settings import *
+# except ImportError:
+#     pass
 
 ## heroku専用 
 # if not DEBUG:

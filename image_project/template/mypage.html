@@ -2,39 +2,73 @@
 {% load static %}
 
 {% block customcss %}
+<link rel="stylesheet" href="{% static 'css/sort.css' %}"></link>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/js/jquery.tablesorter.min.js"></script>
+<script src="{% static 'js/sort.js' %}"></script>
+<style type="text/css">
+    .one{
+        display: inline-block;
+    }
+    .hide{
+        display: none;
+    }
+    img{
+        max-width: 300px;
+        max-height: 300px;
+    }
+    .main-img{
+
+    }
+    img#modal-img{
+        vertical-align:top;
+        margin:10px;
+    }
+    #copy-link{
+        padding: 6px 12px;
+    }
+</style>
 {% endblock customcss %}
 
 {% block content %}
     {% if message %}
-        <h3>今まであなたが診断してきた画像</h3>
         {% for post in message %}
             {% if id == post.user %}
-                <div class="media">
-                    <img src="{{ post.images.url }}" class="mr-3" alt="" width="300">
-                    <div class="media-body">
-                        <h5 class="mt-0 btn-h5">{{ post.title }}</h5>
-                        <table class="table">
+                <div class="one">
+                    <img src="{{ post.images.url }}" class="trig" class="main-img" data-id="{{ forloop.counter }}">
+                    <div class="hide" id="table-{{ forloop.counter }}">
+                        <table class="table table-bordered table-striped">
                             <thead>
+                                <tr><th colspan=4>診断結果</th></tr>
                                 <tr>
-                                    {% comment %} <th>モデル名</th> {% endcomment %}
+                                    <th>使用モデル</th>
                                     <th>英語</th>
-                                    <th>日本語</th>
+                                    <th>日本語訳</th>
                                     <th>確率</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for result in results %}
-                                    {% if result.image_pk == post.pk %}
-                                        <tr>
-                                            {% comment %} <td>{{ resilt.model }}</td> {% endcomment %}
-                                            <td>{{ result.en }}</td>
-                                            <td>{{ result.jp }}</td>
-                                            <td>{{ result.tie }}</td>
-                                        </tr>
+                                {% for da in results %}
+                                    {% if da.image_pk == post.pk %}
+                                    <tr>
+                                        {% for key,name in models.items %}
+                                            {% if key == da.model %}
+                                                <td class="model-name" data-value="{{ key }}">{{ name }}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <td>{{ da.en }}</td>
+                                        <td>{{ da.jp }}</td>
+                                        <td>{{ da.tie }}%</td>
+                                    </tr>
                                     {% endif %}
                                 {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+                    <span class="hide" id="title-{{ forloop.counter }}">
+                        <h3>{{ post.title }}</h3>
+                    </span>
+                    <div class="hide" id="link-{{ forloop.counter }}">
+                        <a href="{% url 'judger' post.pk %}" class="btn-success">開く</a>
                     </div>
                 </div>
             {% endif %}
@@ -42,14 +76,22 @@
     {% else %}
         <p class="text-danger">投稿したコンテンツがありません</p>
     {% endif %}
+    {% include "modal-maker.html" %}
     <script type="text/javascript">
         $(function(){
-            $('.btn-h5').on('click',function(){
-                $(this).next("table").animate({"height":"toggle"});
+            $("div.modal-body").scroll(function(){
+                $('#modal-img').css({"position":"relative","top":$(this).scrollTop()});
             });
-            $('table').animate({"height":"toggle"});
-            $('img').on('click',function(){
-                $(this).next("div.media-body").animate({"height":"toggle"});
+            $('.trig').on('click',function(){
+                var ff = $(this).data("id");
+                console.log(ff);
+                var src = $(this).attr("src");
+                $("#modal-op").modal();
+                $('#modal-img').attr("src",src);
+                $('#modal-table').html($("#table-"+ff).html());
+                $('#copy-link').html($("#link-"+ff).html());
+                $('table.table').tablesorter({});
+                $('span.modal-title').html($("#title-"+ff).html());
             });
         });
     </script>
