@@ -26,6 +26,45 @@
     #copy-link{
         padding: 6px 12px;
     }
+    .ribon{
+        position: absolute;
+        /* top: -6px;
+        right: -6px; */
+        width: 89px;
+        height: 91px;
+        overflow: hidden;
+    }
+    .ribon .release{
+        display: inline-block;
+        position: absolute;
+        padding: 7px 0;
+        left: -23px;
+        top: 22px;
+        width: 160px;
+        text-align: center;
+        font-size: 18px;
+        line-height: 16px;
+        background: #ffa520;
+        color: #fff;
+        letter-spacing: 0.05em;
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    .ribon .release:before,
+    .ribon .release:after{
+        position: absolute;
+        content: "";
+        border-top: 4px solid #b2751b;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        bottom: -4px;      }
+      .ribon .place:before{
+        left:14px
+      }
+      .ribon .place:after{
+        right:18px
+      }
 </style>
 {% endblock customcss %}
 
@@ -34,7 +73,14 @@
         {% for post in message %}
             {% if id == post.user %}
                 <div class="one">
-                    <img src="{{ post.images.url }}" class="trig" class="main-img" data-id="{{ forloop.counter }}">
+                    {% if post.release %}
+                        <div class="ribon" id="ribon-{{ forloop.counter }}">
+                            <span class="release">
+                                公開
+                            </span>
+                        </div>
+                    {% endif %}
+                    <img src="{{ post.images.url }}" class="trig main-img img-thumbnail" data-id="{{ forloop.counter }}">
                     <div class="hide" id="table-{{ forloop.counter }}">
                         <table class="table table-bordered table-striped">
                             <thead>
@@ -71,6 +117,17 @@
                         <a href="{% url 'judger' post.pk %}" class="btn-success">開く</a>
                     </div>
                 </div>
+                {% if post.release %}
+                    <script type="text/javascript">
+                        $(function(){
+                            $("#ribon-{{ forloop.counter }}").css({"left":$("#ribon-{{ forloop.counter }}").parent().width()-$("#ribon-{{ forloop.counter }}").width()});
+                        });
+                        $(window).resize(function(){
+                            $("#ribon-{{ forloop.counter }}").css({"left":$("#ribon-{{ forloop.counter }}").parent().width()-$("#ribon-{{ forloop.counter }}").width()});
+                        });
+                    </script>
+                {% endif %}
+
             {% endif %}
         {% endfor %}
     {% else %}
