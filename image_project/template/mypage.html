@@ -34,6 +34,21 @@
         height: 91px;
         overflow: hidden;
     }
+    .ribon.release-ribon .release{
+        background: #ffa520;
+    }
+    .ribon.release-ribon .release:before,
+    .ribon.release-ribon .release:after{
+        border-top: 4px solid #b67615;
+    }
+    .ribon.private-ribon .release{
+        background: #1f7aff;
+    }
+    .ribon.private-ribon .release:before,
+    .ribon.private-ribon .release:after{
+        border-top: 4px solid #1657b6;
+    }
+
     .ribon .release{
         display: inline-block;
         position: absolute;
@@ -44,7 +59,6 @@
         text-align: center;
         font-size: 18px;
         line-height: 16px;
-        background: #ffa520;
         color: #fff;
         letter-spacing: 0.05em;
         -webkit-transform: rotate(45deg);
@@ -55,16 +69,16 @@
     .ribon .release:after{
         position: absolute;
         content: "";
-        border-top: 4px solid #b2751b;
         border-left: 4px solid transparent;
         border-right: 4px solid transparent;
-        bottom: -4px;      }
-      .ribon .place:before{
+        bottom: -4px;
+    }
+    .ribon .place:before{
         left:14px
-      }
-      .ribon .place:after{
+    }
+    .ribon .place:after{
         right:18px
-      }
+    }
 </style>
 {% endblock customcss %}
 
@@ -73,13 +87,15 @@
         {% for post in message %}
             {% if id == post.user %}
                 <div class="one">
-                    {% if post.release %}
-                        <div class="ribon" id="ribon-{{ forloop.counter }}">
-                            <span class="release">
-                                公開
-                            </span>
-                        </div>
-                    {% endif %}
+                    <div class="ribon {% if post.release %}release-ribon{% else%}private-ribon{% endif%}" id="ribon-{{ forloop.counter }}">
+                        <span class="release">
+                        {% if post.release %}
+                            公開
+                        {% else %}
+                            非公開
+                        {% endif %}
+                        </span>
+                    </div>
                     <img src="{{ post.images.url }}" class="trig main-img img-thumbnail" data-id="{{ forloop.counter }}">
                     <div class="hide" id="table-{{ forloop.counter }}">
                         <table class="table table-bordered table-striped">
@@ -117,17 +133,14 @@
                         <a href="{% url 'judger' post.pk %}" class="btn-success">開く</a>
                     </div>
                 </div>
-                {% if post.release %}
-                    <script type="text/javascript">
-                        $(function(){
-                            $("#ribon-{{ forloop.counter }}").css({"left":$("#ribon-{{ forloop.counter }}").parent().width()-$("#ribon-{{ forloop.counter }}").width()});
-                        });
-                        $(window).resize(function(){
-                            $("#ribon-{{ forloop.counter }}").css({"left":$("#ribon-{{ forloop.counter }}").parent().width()-$("#ribon-{{ forloop.counter }}").width()});
-                        });
-                    </script>
-                {% endif %}
-
+                <script type="text/javascript">
+                    $(function(){
+                        $("#ribon-{{ forloop.counter }}").css({"left":$("#ribon-{{ forloop.counter }}").parent().width()-$("#ribon-{{ forloop.counter }}").width()});
+                    });
+                    $(window).resize(function(){
+                        $("#ribon-{{ forloop.counter }}").css({"left":$("#ribon-{{ forloop.counter }}").parent().width()-$("#ribon-{{ forloop.counter }}").width()});
+                    });
+                </script>
             {% endif %}
         {% endfor %}
     {% else %}
@@ -149,6 +162,11 @@
                 $('#copy-link').html($("#link-"+ff).html());
                 $('table.table').tablesorter({});
                 $('span.modal-title').html($("#title-"+ff).html());
+            });
+            $(".ribon").on("click",function(){
+                var target = $(this).attr("id");
+                var number = target.replace("ribon-","");
+                {% comment %} ここに公開と非公開を切り替えるためのモーダルの用意 {% endcomment %}
             });
         });
     </script>
